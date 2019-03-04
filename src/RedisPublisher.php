@@ -57,7 +57,7 @@ final class RedisPublisher
      */
     public function disconnect(): void
     {
-        if(null !== $this->publishClient)
+        if (null !== $this->publishClient)
         {
             $this->publishClient->close();
         }
@@ -79,7 +79,7 @@ final class RedisPublisher
         return call(
             function(OutboundPackage $outboundPackage): \Generator
             {
-                if(null === $this->publishClient)
+                if (null === $this->publishClient)
                 {
                     $this->publishClient = new Client((string) $this->config);
                 }
@@ -107,7 +107,7 @@ final class RedisPublisher
                 /** @var int $result */
                 $result = yield $this->publishClient->publish($destinationChannel, $package);
 
-                if(0 === $result && true === $outboundPackage->mandatoryFlag)
+                if (0 === $result && true === $outboundPackage->mandatoryFlag)
                 {
                     $this->logger->critical('Publish message failed', [
                         'channelName' => $destinationChannel,

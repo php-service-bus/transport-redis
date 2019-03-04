@@ -54,8 +54,7 @@ final class RedisConsumer
         RedisChannel $channel,
         RedisTransportConnectionConfiguration $config,
         ?LoggerInterface $logger = null
-    )
-    {
+    ) {
         $this->channel = $channel;
         $this->config  = $config;
         $this->logger  = $logger ?? new NullLogger();
@@ -66,9 +65,10 @@ final class RedisConsumer
      *
      * @param callable $onMessage
      *
+     * @throws \ServiceBus\Transport\Common\Exceptions\ConnectionFail Connection refused
+     *
      * @return Promise
      *
-     * @throws \ServiceBus\Transport\Common\Exceptions\ConnectionFail Connection refused
      *
      */
     public function listen(callable $onMessage): Promise
@@ -94,13 +94,13 @@ final class RedisConsumer
                      */
                     $subscription = yield $this->subscribeClient->subscribe($channelName);
                 }
-                catch(\Throwable $throwable)
+                catch (\Throwable $throwable)
                 {
                     throw ConnectionFail::fromThrowable($throwable);
                 }
 
                 /** @psalm-suppress TooManyTemplateParams */
-                while(yield $subscription->advance())
+                while (yield $subscription->advance())
                 {
                     try
                     {
@@ -109,8 +109,8 @@ final class RedisConsumer
 
                         self::handleMessage($jsonMessage, $channelName, $onMessage);
                     }
-                        // @codeCoverageIgnoreStart
-                    catch(\Throwable $throwable)
+                    // @codeCoverageIgnoreStart
+                    catch (\Throwable $throwable)
                     {
                         $this->logger->error('Emit package failed: {throwableMessage} ', [
                             'throwableMessage' => $throwable->getMessage(),
@@ -138,11 +138,10 @@ final class RedisConsumer
         $decoded = \json_decode($messagePayload, true);
 
         /** @psalm-suppress RedundantConditionGivenDocblockType */
-        if(
+        if (
             false !== $decoded && \JSON_ERROR_NONE === \json_last_error() &&
             true === \is_array($decoded) && 2 === \count($decoded)
-        )
-        {
+        ) {
             /**
              * @psalm-var string $body
              * @psalm-var array<string, string|int|float> $headers
@@ -156,7 +155,7 @@ final class RedisConsumer
         }
 
         /**
-         * Message without headers
+         * Message without headers.
          *
          * @psalm-suppress InvalidArgument
          */
@@ -174,7 +173,7 @@ final class RedisConsumer
         return call(
             function(): void
             {
-                if(null === $this->subscribeClient)
+                if (null === $this->subscribeClient)
                 {
                     return;
                 }
