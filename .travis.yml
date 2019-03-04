@@ -9,6 +9,9 @@ matrix:
   allow_failures:
     - php: 7.4snapshot
 
+services:
+  - redis-server
+
 cache:
   directories:
     - $HOME/.cache/composer
