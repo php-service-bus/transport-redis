@@ -5,8 +5,7 @@
   "keywords": [
     "async-php",
     "command-bus",
-    "messaging",
-    "amqp"
+    "messaging"
   ],
   "authors": [
     {

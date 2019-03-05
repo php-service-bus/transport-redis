@@ -54,23 +54,13 @@ final class RedisTransport implements Transport
     private $logger;
 
     /**
-     * @var bool
-     */
-    private $noWait;
-
-    /**
      * @param RedisTransportConnectionConfiguration $config
      * @param LoggerInterface|null                  $logger
-     * @param bool                                  $noWait
      */
-    public function __construct(
-        RedisTransportConnectionConfiguration $config,
-        ?LoggerInterface $logger = null,
-        bool $noWait = true
-    ) {
+    public function __construct(RedisTransportConnectionConfiguration $config, ?LoggerInterface $logger = null)
+    {
         $this->config = $config;
         $this->logger = $logger ?? new NullLogger();
-        $this->noWait = $noWait;
     }
 
     /**
@@ -109,7 +99,7 @@ final class RedisTransport implements Transport
                 $emitter = new Emitter();
 
                 /** @var \ServiceBus\Transport\Redis\RedisChannel $channel */
-                foreach ($channels as $channel)
+                foreach($channels as $channel)
                 {
                     $channelName = (string) $channel;
 
@@ -128,7 +118,7 @@ final class RedisTransport implements Transport
                             {
                                 yield $emitter->emit($incomingPackage);
                             }
-                            catch (\Throwable $throwable)
+                            catch(\Throwable $throwable)
                             {
                                 $this->logger->error('Emit package failed: {throwableMessage} ', [
                                     'throwableMessage' => $throwable->getMessage(),
@@ -138,12 +128,17 @@ final class RedisTransport implements Transport
                         }
                     );
 
-                    if (true === $this->noWait)
-                    {
-                        yield $promise;
-                    }
+                    $promise->onResolve(
+                        function(?\Throwable $throwable) use ($channelName, $consumer): void
+                        {
+                            if(null !== $throwable)
+                            {
+                                throw $throwable;
+                            }
 
-                    $this->consumers[$channelName] = $consumer;
+                            $this->consumers[$channelName] = $consumer;
+                        }
+                    );
                 }
 
                 return $emitter->iterate();
@@ -172,7 +167,7 @@ final class RedisTransport implements Transport
         return call(
             function(OutboundPackage $outboundPackage): \Generator
             {
-                if (null === $this->publisher)
+                if(null === $this->publisher)
                 {
                     $this->publisher = new RedisPublisher($this->config, $this->logger);
                 }
@@ -200,7 +195,7 @@ final class RedisTransport implements Transport
         return call(
             function(): \Generator
             {
-                if (null !== $this->publisher)
+                if(null !== $this->publisher)
                 {
                     $this->publisher->disconnect();
                 }
@@ -208,7 +203,7 @@ final class RedisTransport implements Transport
                 $promises = [];
 
                 /** @var RedisConsumer $consumer */
-                foreach ($this->consumers as $consumer)
+                foreach($this->consumers as $consumer)
                 {
                     $promises[] = $consumer->stop();
                 }
