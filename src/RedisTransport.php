@@ -99,7 +99,7 @@ final class RedisTransport implements Transport
                 $emitter = new Emitter();
 
                 /** @var \ServiceBus\Transport\Redis\RedisChannel $channel */
-                foreach($channels as $channel)
+                foreach ($channels as $channel)
                 {
                     $channelName = (string) $channel;
 
@@ -118,7 +118,7 @@ final class RedisTransport implements Transport
                             {
                                 yield $emitter->emit($incomingPackage);
                             }
-                            catch(\Throwable $throwable)
+                            catch (\Throwable $throwable)
                             {
                                 $this->logger->error('Emit package failed: {throwableMessage} ', [
                                     'throwableMessage' => $throwable->getMessage(),
@@ -131,7 +131,7 @@ final class RedisTransport implements Transport
                     $promise->onResolve(
                         function(?\Throwable $throwable) use ($channelName, $consumer): void
                         {
-                            if(null !== $throwable)
+                            if (null !== $throwable)
                             {
                                 throw $throwable;
                             }
@@ -167,7 +167,7 @@ final class RedisTransport implements Transport
         return call(
             function(OutboundPackage $outboundPackage): \Generator
             {
-                if(null === $this->publisher)
+                if (null === $this->publisher)
                 {
                     $this->publisher = new RedisPublisher($this->config, $this->logger);
                 }
@@ -195,7 +195,7 @@ final class RedisTransport implements Transport
         return call(
             function(): \Generator
             {
-                if(null !== $this->publisher)
+                if (null !== $this->publisher)
                 {
                     $this->publisher->disconnect();
                 }
@@ -203,7 +203,7 @@ final class RedisTransport implements Transport
                 $promises = [];
 
                 /** @var RedisConsumer $consumer */
-                foreach($this->consumers as $consumer)
+                foreach ($this->consumers as $consumer)
                 {
                     $promises[] = $consumer->stop();
                 }
