@@ -70,7 +70,7 @@ final class RedisTransportTest extends TestCase
      */
     public function flow(): void
     {
-        $transport = new RedisTransport($this->config, null, false);
+        $transport = new RedisTransport($this->config, null);
 
         Loop::run(
             function() use ($transport): \Generator
@@ -89,7 +89,7 @@ final class RedisTransportTest extends TestCase
 
                         $messages[] = $message->payload();
 
-                        if(2 === \count($messages))
+                        if (2 === \count($messages))
                         {
                             static::assertSame(['qwerty.message', 'root.message'], $messages);
 
@@ -136,7 +136,6 @@ final class RedisTransportTest extends TestCase
                 yield $transport->consume(
                     function(): void
                     {
-
                     },
                     RedisChannel::create('root')
                 );
