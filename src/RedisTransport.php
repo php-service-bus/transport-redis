@@ -18,7 +18,6 @@ use Amp\Promise;
 use Amp\Success;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use ServiceBus\Transport\Common\Package\IncomingPackage;
 use ServiceBus\Transport\Common\Package\OutboundPackage;
 use ServiceBus\Transport\Common\Queue;
 use ServiceBus\Transport\Common\QueueBind;
@@ -88,11 +87,11 @@ final class RedisTransport implements Transport
      *
      * {@inheritdoc}
      */
-    public function consume(Queue ...$channels): Promise
+    public function consume(callable $onMessage, Queue ... $queues): Promise
     {
         /** @psalm-suppress MixedTypeCoercion */
         return call(
-            function(array $channels): \Generator
+            function(array $channels) use ($onMessage): \Generator
             {
                 yield $this->connect();
 
@@ -111,22 +110,7 @@ final class RedisTransport implements Transport
 
                     $consumer = new RedisConsumer($channel, $this->config, $this->logger);
 
-                    $promise = $consumer->listen(
-                        function(IncomingPackage $incomingPackage) use ($emitter): \Generator
-                        {
-                            try
-                            {
-                                yield $emitter->emit($incomingPackage);
-                            }
-                            catch (\Throwable $throwable)
-                            {
-                                $this->logger->error('Emit package failed: {throwableMessage} ', [
-                                    'throwableMessage' => $throwable->getMessage(),
-                                    'throwablePoint'   => \sprintf('%s:%d', $throwable->getFile(), $throwable->getLine()),
-                                ]);
-                            }
-                        }
-                    );
+                    $promise = $consumer->listen($onMessage);
 
                     $promise->onResolve(
                         function(?\Throwable $throwable) use ($channelName, $consumer): void
@@ -143,7 +127,7 @@ final class RedisTransport implements Transport
 
                 return $emitter->iterate();
             },
-            $channels
+            $queues
         );
     }
 
