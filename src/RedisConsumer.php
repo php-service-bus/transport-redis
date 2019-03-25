@@ -68,8 +68,6 @@ final class RedisConsumer
      * @throws \ServiceBus\Transport\Common\Exceptions\ConnectionFail Connection refused
      *
      * @return Promise
-     *
-     *
      */
     public function listen(callable $onMessage): Promise
     {

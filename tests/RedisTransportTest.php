@@ -77,8 +77,27 @@ final class RedisTransportTest extends TestCase
             {
                 $messages = [];
 
-                /** @var \Amp\Iterator $iterator */
-                $iterator = yield $transport->consume(
+                yield $transport->consume(
+                    function(RedisIncomingPackage $message) use (&$messages, $transport): \Generator
+                    {
+                        static::assertGreaterThan(0, $message->time());
+                        static::assertInstanceOf(RedisIncomingPackage::class, $message);
+                        static::assertTrue(Uuid::isValid($message->id()));
+                        static::assertTrue(Uuid::isValid($message->traceId()));
+                        static::assertArrayHasKey(Transport::SERVICE_BUS_TRACE_HEADER, $message->headers());
+                        static::assertTrue(Uuid::isValid($message->headers()[Transport::SERVICE_BUS_TRACE_HEADER]));
+
+                        $messages[] = $message->payload();
+
+                        if(2 === \count($messages))
+                        {
+                            static::assertSame(['qwerty.message', 'root.message'], $messages);
+
+                            yield $transport->stop();
+
+                            Loop::stop();
+                        }
+                    },
                     RedisChannel::create('qwerty'),
                     RedisChannel::create('root')
                 );
@@ -90,30 +109,6 @@ final class RedisTransportTest extends TestCase
                 yield $transport->send(
                     OutboundPackage::create('root.message', [], new RedisTransportLevelDestination('root'), uuid())
                 );
-
-                while (yield $iterator->advance())
-                {
-                    /** @var RedisIncomingPackage $message */
-                    $message = $iterator->getCurrent();
-
-                    static::assertGreaterThan(0, $message->time());
-                    static::assertInstanceOf(RedisIncomingPackage::class, $message);
-                    static::assertTrue(Uuid::isValid($message->id()));
-                    static::assertTrue(Uuid::isValid($message->traceId()));
-                    static::assertArrayHasKey(Transport::SERVICE_BUS_TRACE_HEADER, $message->headers());
-                    static::assertTrue(Uuid::isValid($message->headers()[Transport::SERVICE_BUS_TRACE_HEADER]));
-
-                    $messages[] = $message->payload();
-
-                    if (2 === \count($messages))
-                    {
-                        static::assertSame(['qwerty.message', 'root.message'], $messages);
-
-                        yield $transport->stop();
-
-                        Loop::stop();
-                    }
-                }
             }
         );
     }
@@ -138,7 +133,13 @@ final class RedisTransportTest extends TestCase
             {
                 $transport = new RedisTransport($config);
 
-                yield $transport->consume(RedisChannel::create('root'));
+                yield $transport->consume(
+                    function(): void
+                    {
+
+                    },
+                    RedisChannel::create('root')
+                );
             }
         );
     }
