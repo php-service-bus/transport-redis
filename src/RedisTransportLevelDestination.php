@@ -30,7 +30,7 @@ final class RedisTransportLevelDestination implements DeliveryDestination
     /**
      * @param string $channel
      *
-     * @throws \ServiceBus\Transport\Common\DeliveryDestination
+     * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName
      */
     public function __construct(string $channel)
     {
