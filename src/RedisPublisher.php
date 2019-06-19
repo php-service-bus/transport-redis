@@ -88,7 +88,7 @@ final class RedisPublisher
 
                 /** @var RedisTransportLevelDestination $destination */
                 $destination        = $outboundPackage->destination;
-                $destinationChannel = (string) $destination->channel;
+                $destinationChannel = $destination->channel;
                 $headers            = \array_filter(\array_merge($internalHeaders, $outboundPackage->headers));
 
                 /** @var string $package */

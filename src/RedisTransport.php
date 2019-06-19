@@ -100,12 +100,10 @@ final class RedisTransport implements Transport
                 /** @var \ServiceBus\Transport\Redis\RedisChannel $channel */
                 foreach ($channels as $channel)
                 {
-                    $channelName = (string) $channel;
-
                     $this->logger->info('Starting a subscription to the "{channelName}" channel', [
                         'host'        => $this->config->host,
                         'port'        => $this->config->port,
-                        'channelName' => $channelName,
+                        'channelName' => $channel->name,
                     ]);
 
                     $consumer = new RedisConsumer($channel, $this->config, $this->logger);
@@ -113,14 +111,14 @@ final class RedisTransport implements Transport
                     $promise = $consumer->listen($onMessage);
 
                     $promise->onResolve(
-                        function(?\Throwable $throwable) use ($channelName, $consumer): void
+                        function(?\Throwable $throwable) use ($channel, $consumer): void
                         {
                             if (null !== $throwable)
                             {
                                 throw $throwable;
                             }
 
-                            $this->consumers[$channelName] = $consumer;
+                            $this->consumers[$channel->name] = $consumer;
                         }
                     );
                 }

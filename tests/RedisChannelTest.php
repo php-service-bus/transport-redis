@@ -31,7 +31,7 @@ final class RedisChannelTest extends TestCase
      */
     public function successCreate(): void
     {
-        static::assertSame('qwerty', (string) RedisChannel::create('qwerty'));
+        static::assertSame('qwerty', RedisChannel::create('qwerty')->name);
     }
 
     /**

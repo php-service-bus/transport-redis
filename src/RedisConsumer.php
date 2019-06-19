@@ -77,10 +77,8 @@ final class RedisConsumer
             {
                 $this->subscribeClient = new SubscribeClient((string) $this->config);
 
-                $channelName = (string) $this->channel;
-
                 $this->logger->info('Creates new consumer for channel "{channelName}" ', [
-                    'channelName' => $channelName,
+                    'channelName' => $this->channel->name,
                 ]);
 
                 try
@@ -90,7 +88,7 @@ final class RedisConsumer
                      *
                      * @var \Amp\Redis\Subscription $subscription
                      */
-                    $subscription = yield $this->subscribeClient->subscribe($channelName);
+                    $subscription = yield $this->subscribeClient->subscribe($this->channel->name);
                 }
                 catch (\Throwable $throwable)
                 {
@@ -105,7 +103,7 @@ final class RedisConsumer
                         /** @var string $jsonMessage */
                         $jsonMessage = $subscription->getCurrent();
 
-                        self::handleMessage($jsonMessage, $channelName, $onMessage);
+                        self::handleMessage($jsonMessage, $this->channel->name, $onMessage);
                     }
                     // @codeCoverageIgnoreStart
                     catch (\Throwable $throwable)
@@ -136,10 +134,8 @@ final class RedisConsumer
         $decoded = \json_decode($messagePayload, true);
 
         /** @psalm-suppress RedundantConditionGivenDocblockType */
-        if (
-            false !== $decoded && \JSON_ERROR_NONE === \json_last_error() &&
-            true === \is_array($decoded) && 2 === \count($decoded)
-        ) {
+        if (true === \is_array($decoded) && 2 === \count($decoded))
+        {
             /**
              * @psalm-var string $body
              * @psalm-var array<string, string|int|float> $headers
@@ -178,7 +174,7 @@ final class RedisConsumer
 
                 $this->subscribeClient->close();
 
-                $this->logger->info('Subscription canceled', ['channelName' => (string) $this->channel]);
+                $this->logger->info('Subscription canceled', ['channelName' => $this->channel->name]);
             }
         );
     }

@@ -16,14 +16,18 @@ use ServiceBus\Transport\Common\Queue;
 use ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName;
 
 /**
+ * Channel.
  *
+ * @property-read string $name
  */
 final class RedisChannel implements Queue
 {
     /**
+     * Channel name.
+     *
      * @var string
      */
-    private $channel;
+    public $name;
 
     /**
      * @param string $channel
@@ -39,11 +43,21 @@ final class RedisChannel implements Queue
     }
 
     /**
+     * @deprecated Will be removed in the next version (use toString() method)
+     *
      * {@inheritdoc}
      */
     public function __toString(): string
     {
-        return $this->channel;
+        return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toString(): string
+    {
+        return $this->name;
     }
 
     /**
@@ -58,6 +72,6 @@ final class RedisChannel implements Queue
             throw IncorrectChannelName::emptyChannelName();
         }
 
-        $this->channel = $channel;
+        $this->name = $channel;
     }
 }

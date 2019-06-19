@@ -76,10 +76,13 @@ final class RedisConsumerTest extends TestCase
             static function() use ($publisher, $consumer)
             {
                 $consumer->listen(
-                    function(RedisIncomingPackage $package) use ($consumer): \Generator
+                    static function(RedisIncomingPackage $package) use ($consumer): \Generator
                     {
+                        /** @var RedisTransportLevelDestination $destination */
+                        $destination = $package->origin();
+
                         static::assertSame('qwerty', $package->payload());
-                        static::assertSame('qwerty', $package->origin()->channel);
+                        static::assertSame('qwerty', $destination->channel);
 
                         yield $consumer->stop();
 
@@ -88,7 +91,7 @@ final class RedisConsumerTest extends TestCase
                 );
 
                 yield $publisher->publish(
-                    OutboundPackage::create(
+                    new OutboundPackage(
                         'qwerty',
                         [],
                         new RedisTransportLevelDestination('qwerty'),
@@ -113,10 +116,10 @@ final class RedisConsumerTest extends TestCase
         $publishClient = new Client((string) $this->config);
 
         Loop::run(
-            function() use ($consumer, $publishClient): \Generator
+            static function() use ($consumer, $publishClient): \Generator
             {
                 $consumer->listen(
-                    function(RedisIncomingPackage $package) use ($consumer): \Generator
+                    static function(RedisIncomingPackage $package) use ($consumer): \Generator
                     {
                         static::assertSame('simpleBody', $package->payload());
 

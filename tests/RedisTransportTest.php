@@ -73,12 +73,12 @@ final class RedisTransportTest extends TestCase
         $transport = new RedisTransport($this->config, null);
 
         Loop::run(
-            function() use ($transport): \Generator
+            static function() use ($transport): \Generator
             {
                 $messages = [];
 
                 yield $transport->consume(
-                    function(RedisIncomingPackage $message) use (&$messages, $transport): \Generator
+                    static function(RedisIncomingPackage $message) use (&$messages, $transport): \Generator
                     {
                         static::assertGreaterThan(0, $message->time());
                         static::assertInstanceOf(RedisIncomingPackage::class, $message);
@@ -103,11 +103,11 @@ final class RedisTransportTest extends TestCase
                 );
 
                 yield $transport->send(
-                    OutboundPackage::create('qwerty.message', [], new RedisTransportLevelDestination('qwerty'), uuid())
+                    new  OutboundPackage('qwerty.message', [], new RedisTransportLevelDestination('qwerty'), uuid())
                 );
 
                 yield $transport->send(
-                    OutboundPackage::create('root.message', [], new RedisTransportLevelDestination('root'), uuid())
+                    new OutboundPackage('root.message', [], new RedisTransportLevelDestination('root'), uuid())
                 );
             }
         );
@@ -129,7 +129,7 @@ final class RedisTransportTest extends TestCase
         $config = new RedisTransportConnectionConfiguration('tcp://localhost:9000');
 
         Loop::run(
-            function() use ($config)
+            static function() use ($config)
             {
                 $transport = new RedisTransport($config);
 
