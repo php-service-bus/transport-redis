@@ -54,7 +54,8 @@ final class RedisConsumer
         RedisChannel $channel,
         RedisTransportConnectionConfiguration $config,
         ?LoggerInterface $logger = null
-    ) {
+    )
+    {
         $this->channel = $channel;
         $this->config  = $config;
         $this->logger  = $logger ?? new NullLogger();
@@ -83,20 +84,15 @@ final class RedisConsumer
 
                 try
                 {
-                    /**
-                     * @psalm-suppress TooManyTemplateParams
-                     *
-                     * @var \Amp\Redis\Subscription $subscription
-                     */
+                    /** @var \Amp\Redis\Subscription $subscription */
                     $subscription = yield $this->subscribeClient->subscribe($this->channel->name);
                 }
-                catch (\Throwable $throwable)
+                catch(\Throwable $throwable)
                 {
                     throw ConnectionFail::fromThrowable($throwable);
                 }
 
-                /** @psalm-suppress TooManyTemplateParams */
-                while (yield $subscription->advance())
+                while(yield $subscription->advance())
                 {
                     try
                     {
@@ -105,8 +101,8 @@ final class RedisConsumer
 
                         self::handleMessage($jsonMessage, $this->channel->name, $onMessage);
                     }
-                    // @codeCoverageIgnoreStart
-                    catch (\Throwable $throwable)
+                        // @codeCoverageIgnoreStart
+                    catch(\Throwable $throwable)
                     {
                         $this->logger->error('Emit package failed: {throwableMessage} ', [
                             'throwableMessage' => $throwable->getMessage(),
@@ -127,14 +123,16 @@ final class RedisConsumer
      * @param callable $onMessage
      *
      * @return void
+     *
+     * @throws \Throwable json decode failed
      */
     private static function handleMessage(string $messagePayload, string $onChannel, callable $onMessage): void
     {
-        /** @var array|false $decoded */
-        $decoded = \json_decode($messagePayload, true);
+        /** @var array|null $decoded */
+        $decoded = \json_decode($messagePayload, true, 512, \JSON_THROW_ON_ERROR);
 
         /** @psalm-suppress RedundantConditionGivenDocblockType */
-        if (true === \is_array($decoded) && 2 === \count($decoded))
+        if(true === \is_array($decoded) && 2 === \count($decoded))
         {
             /**
              * @psalm-var string $body
@@ -167,7 +165,7 @@ final class RedisConsumer
         return call(
             function(): void
             {
-                if (null === $this->subscribeClient)
+                if(null === $this->subscribeClient)
                 {
                     return;
                 }

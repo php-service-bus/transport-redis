@@ -94,7 +94,7 @@ final class RedisPublisher
                 /** @var string $package */
                 $package = \json_encode(
                     [$outboundPackage->payload, $headers],
-                    \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES
+                    \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_THROW_ON_ERROR
                 );
 
                 $this->logger->debug('Publish message to "{channelName}"', [

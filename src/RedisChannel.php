@@ -43,16 +43,6 @@ final class RedisChannel implements Queue
     }
 
     /**
-     * @deprecated Will be removed in the next version (use toString() method)
-     *
-     * {@inheritdoc}
-     */
-    public function __toString(): string
-    {
-        return $this->name;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function toString(): string
