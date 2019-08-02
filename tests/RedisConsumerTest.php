@@ -15,7 +15,6 @@ namespace ServiceBus\Transport\Redis\Tests;
 use function Amp\Promise\wait;
 use function ServiceBus\Common\uuid;
 use Amp\Loop;
-use Amp\Redis\Client;
 use PHPUnit\Framework\TestCase;
 use ServiceBus\Transport\Common\Package\OutboundPackage;
 use ServiceBus\Transport\Redis\RedisChannel;
@@ -65,7 +64,6 @@ final class RedisConsumerTest extends TestCase
      * @throws \Throwable
      *
      * @return void
-     *
      */
     public function pubSub(): void
     {
@@ -98,38 +96,6 @@ final class RedisConsumerTest extends TestCase
                         uuid()
                     )
                 );
-            }
-        );
-    }
-
-    /**
-     * @test
-     *
-     * @throws \Throwable
-     *
-     * @return void
-     *
-     */
-    public function pubSubWithSimpleMessageBody(): void
-    {
-        $consumer      = new RedisConsumer(RedisChannel::create('qwerty'), $this->config);
-        $publishClient = new Client((string) $this->config);
-
-        Loop::run(
-            static function() use ($consumer, $publishClient): \Generator
-            {
-                $consumer->listen(
-                    static function(RedisIncomingPackage $package) use ($consumer): \Generator
-                    {
-                        static::assertSame('simpleBody', $package->payload());
-
-                        yield $consumer->stop();
-
-                        Loop::stop();
-                    }
-                );
-
-                yield $publishClient->publish('qwerty', 'simpleBody');
             }
         );
     }
