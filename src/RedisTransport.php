@@ -137,7 +137,7 @@ final class RedisTransport implements Transport
         return call(
             function(OutboundPackage $outboundPackage): \Generator
             {
-                if (null === $this->publisher)
+                if (false === isset($this->publisher))
                 {
                     $this->publisher = new RedisPublisher($this->config, $this->logger);
                 }
@@ -164,7 +164,7 @@ final class RedisTransport implements Transport
         return call(
             function(): \Generator
             {
-                if (null !== $this->publisher)
+                if (true === isset($this->publisher))
                 {
                     $this->publisher->disconnect();
                 }
