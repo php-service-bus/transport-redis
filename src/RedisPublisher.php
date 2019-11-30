@@ -14,7 +14,9 @@ namespace ServiceBus\Transport\Redis;
 
 use function Amp\call;
 use Amp\Promise;
-use Amp\Redis\Client;
+use Amp\Redis\Config;
+use Amp\Redis\Redis;
+use Amp\Redis\RemoteExecutor;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Transport\Common\Package\OutboundPackage;
@@ -25,25 +27,12 @@ use ServiceBus\Transport\Common\Transport;
  */
 final class RedisPublisher
 {
-    /**
-     * @var Client|null
-     */
-    private $publishClient;
+    private ?Redis $publishClient;
 
-    /**
-     * @var RedisTransportConnectionConfiguration
-     */
-    private $config;
+    private RedisTransportConnectionConfiguration $config;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param RedisTransportConnectionConfiguration $config
-     * @param LoggerInterface|null                  $logger
-     */
     public function __construct(RedisTransportConnectionConfiguration $config, ?LoggerInterface $logger = null)
     {
         $this->config = $config;
@@ -52,36 +41,28 @@ final class RedisPublisher
 
     /**
      * Close connection.
-     *
-     * @return void
      */
     public function disconnect(): void
     {
-        if (null !== $this->publishClient)
+        if (true === isset($this->publishClient))
         {
-            $this->publishClient->close();
+            $this->publishClient = null;
         }
     }
 
     /**
      * Send message to Redis server.
-     *
-     * @param OutboundPackage $outboundPackage
-     *
-     * @return Promise
      */
     public function publish(OutboundPackage $outboundPackage): Promise
     {
-        /**
-         * @psalm-suppress MixedTypeCoercion
-         * @psalm-suppress InvalidArgument
-         */
         return call(
             function(OutboundPackage $outboundPackage): \Generator
             {
-                if (null === $this->publishClient)
+                if (false === isset($this->publishClient))
                 {
-                    $this->publishClient = new Client((string) $this->config);
+                    $this->publishClient = new Redis(
+                        new RemoteExecutor(Config::fromUri($this->config->toString()))
+                    );
                 }
 
                 $internalHeaders = [Transport::SERVICE_BUS_TRACE_HEADER => $outboundPackage->traceId];

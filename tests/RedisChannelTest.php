@@ -25,27 +25,21 @@ final class RedisChannelTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function successCreate(): void
     {
-        static::assertSame('qwerty', RedisChannel::create('qwerty')->name);
+        static::assertSame('qwerty', (new  RedisChannel('qwerty'))->name);
     }
 
     /**
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function createWithEmptyName(): void
     {
         $this->expectException(IncorrectChannelName::class);
 
-        RedisChannel::create('');
+        new RedisChannel('');
     }
 }

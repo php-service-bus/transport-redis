@@ -17,11 +17,7 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectConnectionParameters;
 /**
  * Connection parameters.
  *
- * @property-read string      $scheme
- * @property-read string      $host
- * @property-read int         $port
- * @property-read int         $timeout
- * @property-read string|null $password
+ * @psalm-readonly
  */
 final class RedisTransportConnectionConfiguration
 {
@@ -31,34 +27,17 @@ final class RedisTransportConnectionConfiguration
 
     private const DEFAULT_TIMEOUT = 5;
 
-    /**
-     * @var string
-     */
-    public $scheme;
+    public string $scheme;
+
+    public string $host;
+
+    public int $port;
+
+    public int $timeout;
+
+    public ?string $password;
 
     /**
-     * @var string
-     */
-    public $host;
-
-    /**
-     * @var int
-     */
-    public $port;
-
-    /**
-     * @var int
-     */
-    public $timeout;
-
-    /**
-     * @var string|null
-     */
-    public $password;
-
-    /**
-     * @param string $connectionDSN
-     *
      * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectConnectionParameters
      */
     public function __construct(string $connectionDSN)
@@ -81,10 +60,7 @@ final class RedisTransportConnectionConfiguration
         }
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function toString(): string
     {
         return \sprintf(
             '%s://%s:%s?%s',
@@ -96,12 +72,7 @@ final class RedisTransportConnectionConfiguration
     }
 
     /**
-     * @param string $connectionDSN
-     *
      * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectConnectionParameters
-     *
-     * @return array
-     *
      */
     private static function parseUrl(string $connectionDSN): array
     {
@@ -127,10 +98,6 @@ final class RedisTransportConnectionConfiguration
 
     /**
      * @psalm-return array<string, string|int|float>
-     *
-     * @param string $connectionDSN
-     *
-     * @return array
      */
     private static function parseQuery(string $connectionDSN): array
     {

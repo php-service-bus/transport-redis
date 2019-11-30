@@ -31,10 +31,7 @@ use ServiceBus\Transport\Redis\RedisTransportLevelDestination;
  */
 final class RedisTransportTest extends TestCase
 {
-    /**
-     * @var RedisTransportConnectionConfiguration
-     */
-    private $config;
+    private RedisTransportConnectionConfiguration $config;
 
     /**
      * {@inheritdoc}
@@ -64,9 +61,6 @@ final class RedisTransportTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function flow(): void
     {
@@ -98,8 +92,8 @@ final class RedisTransportTest extends TestCase
                             Loop::stop();
                         }
                     },
-                    RedisChannel::create('qwerty'),
-                    RedisChannel::create('root')
+                    new RedisChannel('qwerty'),
+                    new  RedisChannel('root')
                 );
 
                 yield $transport->send(
@@ -134,10 +128,10 @@ final class RedisTransportTest extends TestCase
                 $transport = new RedisTransport($config);
 
                 yield $transport->consume(
-                    function(): void
+                    static function(): void
                     {
                     },
-                    RedisChannel::create('root')
+                    new  RedisChannel('root')
                 );
             }
         );
@@ -147,9 +141,6 @@ final class RedisTransportTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function disconnectWithoutConnections(): void
     {

@@ -15,7 +15,8 @@ namespace ServiceBus\Transport\Redis;
 use function Amp\asyncCall;
 use function Amp\call;
 use Amp\Promise;
-use Amp\Redis\SubscribeClient;
+use Amp\Redis\Config;
+use Amp\Redis\Subscriber;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Transport\Common\Exceptions\ConnectionFail;
@@ -28,12 +29,12 @@ final class RedisConsumer
     /**
      * @var RedisChannel
      */
-    private $channel;
+    private RedisChannel $channel;
 
     /**
      * @var RedisTransportConnectionConfiguration
      */
-    private $config;
+    private RedisTransportConnectionConfiguration $config;
 
     /**
      * @var LoggerInterface
@@ -41,9 +42,9 @@ final class RedisConsumer
     private $logger;
 
     /**
-     * @var SubscribeClient|null
+     * @var Subscriber|null
      */
-    private $subscribeClient;
+    private ?Subscriber $subscribeClient;
 
     /**
      * @param RedisChannel                          $channel
@@ -75,7 +76,10 @@ final class RedisConsumer
         return call(
             function() use ($onMessage): \Generator
             {
-                $this->subscribeClient = new SubscribeClient((string) $this->config);
+                if (false === isset($this->subscribeClient))
+                {
+                    $this->subscribeClient = new Subscriber(Config::fromUri($this->config->toString()));
+                }
 
                 $this->logger->info('Creates new consumer for channel "{channelName}" ', [
                     'channelName' => $this->channel->name,
@@ -141,7 +145,7 @@ final class RedisConsumer
             [$body, $headers] = $decoded;
 
             /** @psalm-suppress InvalidArgument */
-            asyncCall($onMessage, RedisIncomingPackage::create($body, $headers, $onChannel));
+            asyncCall($onMessage, new RedisIncomingPackage($body, $headers, $onChannel));
 
             return;
         }
@@ -151,7 +155,7 @@ final class RedisConsumer
          *
          * @psalm-suppress InvalidArgument
          */
-        asyncCall($onMessage, RedisIncomingPackage::create($messagePayload, [], $onChannel));
+        asyncCall($onMessage, new RedisIncomingPackage($messagePayload, [], $onChannel));
     }
 
     /**
@@ -165,12 +169,12 @@ final class RedisConsumer
         return call(
             function(): void
             {
-                if (null === $this->subscribeClient)
+                if (false === isset($this->subscribeClient))
                 {
                     return;
                 }
 
-                $this->subscribeClient->close();
+                $this->subscribeClient = null;
 
                 $this->logger->info('Subscription canceled', ['channelName' => $this->channel->name]);
             }

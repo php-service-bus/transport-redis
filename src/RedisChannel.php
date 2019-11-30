@@ -18,29 +18,14 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName;
 /**
  * Channel.
  *
- * @property-read string $name
+ * @psalm-readonly
  */
 final class RedisChannel implements Queue
 {
     /**
      * Channel name.
-     *
-     * @var string
      */
-    public $name;
-
-    /**
-     * @param string $channel
-     *
-     * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName
-     *
-     * @return self
-     *
-     */
-    public static function create(string $channel): self
-    {
-        return new self($channel);
-    }
+    public string $name;
 
     /**
      * {@inheritdoc}
@@ -51,11 +36,9 @@ final class RedisChannel implements Queue
     }
 
     /**
-     * @param string $channel
-     *
      * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName
      */
-    private function __construct(string $channel)
+    public function __construct(string $channel)
     {
         if ('' === $channel)
         {

@@ -26,53 +26,35 @@ final class RedisIncomingPackage implements IncomingPackage
 {
     /**
      * Received package id.
-     *
-     * @var string
      */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $fromChannel;
+    private string $fromChannel;
 
     /**
      * The time the message was received (Unix timestamp with microseconds).
-     *
-     * @var float
      */
-    private $time;
+    private float $time;
 
-    /**
-     * @var string
-     */
-    private $payload;
+    private string $payload;
 
     /**
      * @psalm-var array<string, string|int|float>
-     *
-     * @var array
      */
-    private $headers = [];
+    private array
+
+ $headers;
 
     /**
      * @psalm-param array<string, string|int|float> $headers
-     *
-     * @param string $payload
-     * @param array  $headers
-     * @param string $fromChannel
-     *
-     * @return self
      */
-    public static function create(string $payload, array $headers, string $fromChannel): self
+    public function __construct(string $payload, array $headers, string $fromChannel)
     {
-        $self = new self();
-
-        $self->payload     = $payload;
-        $self->headers     = $headers;
-        $self->fromChannel = $fromChannel;
-
-        return $self;
+        $this->id          = uuid();
+        $this->time        = (float) \microtime(true);
+        $this->payload     = $payload;
+        $this->headers     = $headers;
+        $this->fromChannel = $fromChannel;
     }
 
     /**
@@ -158,13 +140,5 @@ final class RedisIncomingPackage implements IncomingPackage
         }
 
         return $traceId;
-    }
-
-    /**
-     */
-    private function __construct()
-    {
-        $this->id   = uuid();
-        $this->time = (float) \microtime(true);
     }
 }

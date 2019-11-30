@@ -30,32 +30,21 @@ use ServiceBus\Transport\Common\Transport;
  */
 final class RedisTransport implements Transport
 {
-    /**
-     * @var RedisTransportConnectionConfiguration
-     */
-    private $config;
+    private RedisTransportConnectionConfiguration $config;
 
     /**
      * @psalm-var array<string, \ServiceBus\Transport\Redis\RedisConsumer>
      *
      * @var RedisConsumer[]
      */
-    private $consumers = [];
+    private array
 
-    /**
-     * @var RedisPublisher|null
-     */
-    private $publisher;
+ $consumers = [];
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private ?RedisPublisher $publisher;
 
-    /**
-     * @param RedisTransportConnectionConfiguration $config
-     * @param LoggerInterface|null                  $logger
-     */
+    private LoggerInterface $logger;
+
     public function __construct(RedisTransportConnectionConfiguration $config, ?LoggerInterface $logger = null)
     {
         $this->config = $config;
@@ -89,7 +78,6 @@ final class RedisTransport implements Transport
      */
     public function consume(callable $onMessage, Queue ... $queues): Promise
     {
-        /** @psalm-suppress MixedTypeCoercion */
         return call(
             function(array $channels) use ($onMessage): \Generator
             {
@@ -173,7 +161,6 @@ final class RedisTransport implements Transport
      */
     public function disconnect(): Promise
     {
-        /** @psalm-suppress MixedTypeCoercion */
         return call(
             function(): \Generator
             {

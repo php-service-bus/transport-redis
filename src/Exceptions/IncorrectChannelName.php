@@ -17,9 +17,6 @@ namespace ServiceBus\Transport\Redis\Exceptions;
  */
 final class IncorrectChannelName extends \InvalidArgumentException
 {
-    /**
-     * @return self
-     */
     public static function emptyChannelName(): self
     {
         return new self('Channel name can\'t be empty');

@@ -29,10 +29,7 @@ use ServiceBus\Transport\Redis\RedisTransportLevelDestination;
  */
 final class RedisConsumerTest extends TestCase
 {
-    /**
-     * @var RedisTransportConnectionConfiguration
-     */
-    private $config;
+    private RedisTransportConnectionConfiguration $config;
 
     /**
      * {@inheritdoc}
@@ -62,12 +59,10 @@ final class RedisConsumerTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
      */
     public function pubSub(): void
     {
-        $consumer  = new RedisConsumer(RedisChannel::create('qwerty'), $this->config);
+        $consumer  = new RedisConsumer(new RedisChannel('qwerty'), $this->config);
         $publisher = new RedisPublisher($this->config);
 
         Loop::run(
@@ -104,13 +99,10 @@ final class RedisConsumerTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function disconnectWithoutConsuming(): void
     {
-        $consumer = new RedisConsumer(RedisChannel::create('qwerty'), $this->config);
+        $consumer = new RedisConsumer(new RedisChannel('qwerty'), $this->config);
         wait($consumer->stop());
     }
 }

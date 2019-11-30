@@ -18,18 +18,13 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName;
 /**
  * Which channel the message will be sent to.
  *
- * @property-read string $channel
+ * @psalm-readonly
  */
 final class RedisTransportLevelDestination implements DeliveryDestination
 {
-    /**
-     * @var string
-     */
-    public $channel;
+    public string $channel;
 
     /**
-     * @param string $channel
-     *
      * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName
      */
     public function __construct(string $channel)

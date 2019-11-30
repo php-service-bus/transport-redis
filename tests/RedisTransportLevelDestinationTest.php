@@ -25,9 +25,6 @@ final class RedisTransportLevelDestinationTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function successCreate(): void
     {
@@ -38,9 +35,6 @@ final class RedisTransportLevelDestinationTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function createWithEmptyName(): void
     {

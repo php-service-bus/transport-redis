@@ -17,27 +17,16 @@ namespace ServiceBus\Transport\Redis\Exceptions;
  */
 final class IncorrectConnectionParameters extends \InvalidArgumentException
 {
-    /**
-     * @return self
-     */
     public static function connectionDsnCantBeEmpty(): self
     {
         return new self('Connection DSN can\'t be empty');
     }
 
-    /**
-     * @return self
-     */
     public static function incorrectScheme(): self
     {
         return new self('Connection DSN must start with tcp:// or unix://');
     }
 
-    /**
-     * @param string $dsn
-     *
-     * @return self
-     */
     public static function incorrectDSN(string $dsn): self
     {
         return new self(\sprintf('Can\'t parse specified connection DSN (%s)', $dsn));

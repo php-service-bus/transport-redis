@@ -25,9 +25,6 @@ final class RedisTransportConnectionConfigurationTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function successCreate(): void
     {
@@ -43,9 +40,6 @@ final class RedisTransportConnectionConfigurationTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function emptyDSN(): void
     {
@@ -59,9 +53,6 @@ final class RedisTransportConnectionConfigurationTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function withoutScheme(): void
     {
@@ -75,9 +66,6 @@ final class RedisTransportConnectionConfigurationTest extends TestCase
      * @test
      *
      * @throws \Throwable
-     *
-     * @return void
-     *
      */
     public function incorrectDSN(): void
     {
