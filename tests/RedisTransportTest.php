@@ -74,7 +74,6 @@ final class RedisTransportTest extends TestCase
                 yield $transport->consume(
                     static function(RedisIncomingPackage $message) use (&$messages, $transport): \Generator
                     {
-                        static::assertGreaterThan(0, $message->time());
                         static::assertInstanceOf(RedisIncomingPackage::class, $message);
                         static::assertTrue(Uuid::isValid($message->id()));
                         static::assertTrue(Uuid::isValid($message->traceId()));
