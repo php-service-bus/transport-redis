@@ -117,9 +117,9 @@ final class RedisTransportTest extends TestCase
     public function subscribeWithWrongConnectionData(): void
     {
         $this->expectException(ConnectionFail::class);
-        $this->expectExceptionMessage('Connection attempt failed');
+        $this->expectExceptionMessage('Failed to connect to redis instance (tcp://localhost:1000)');
 
-        $config = new RedisTransportConnectionConfiguration('tcp://localhost:9000');
+        $config = new RedisTransportConnectionConfiguration('tcp://localhost:1000');
 
         Loop::run(
             static function() use ($config)

@@ -39,7 +39,7 @@ final class RedisTransport implements Transport
      */
     private array
 
- $consumers = [];
+        $consumers = [];
 
     private ?RedisPublisher $publisher;
 
@@ -76,7 +76,7 @@ final class RedisTransport implements Transport
      *
      * {@inheritdoc}
      */
-    public function consume(callable $onMessage, Queue ... $queues): Promise
+    public function consume(callable $onMessage, Queue ...$queues): Promise
     {
         return call(
             function(array $channels) use ($onMessage): \Generator
