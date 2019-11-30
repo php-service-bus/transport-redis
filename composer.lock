@@ -858,16 +858,16 @@
         },
         {
             "name": "php-service-bus/transport-common",
-            "version": "v4.0.0",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-service-bus/transport-common.git",
-                "reference": "b0db4c3a6562054f6902e17ccc804f3bf5531341"
+                "reference": "755f49a2b8ef24fdc5df460ed942723e677b35a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-service-bus/transport-common/zipball/b0db4c3a6562054f6902e17ccc804f3bf5531341",
-                "reference": "b0db4c3a6562054f6902e17ccc804f3bf5531341",
+                "url": "https://api.github.com/repos/php-service-bus/transport-common/zipball/755f49a2b8ef24fdc5df460ed942723e677b35a7",
+                "reference": "755f49a2b8ef24fdc5df460ed942723e677b35a7",
                 "shasum": ""
             },
             "require": {
@@ -904,7 +904,7 @@
                 "command-bus",
                 "messaging"
             ],
-            "time": "2019-11-30T00:31:45+00:00"
+            "time": "2019-11-30T23:11:24+00:00"
         },
         {
             "name": "ramsey/uuid",

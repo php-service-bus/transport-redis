@@ -31,11 +31,6 @@ final class RedisIncomingPackage implements IncomingPackage
 
     private string $fromChannel;
 
-    /**
-     * The time the message was received (Unix timestamp with microseconds).
-     */
-    private float $time;
-
     private string $payload;
 
     /**
@@ -51,7 +46,6 @@ final class RedisIncomingPackage implements IncomingPackage
     public function __construct(string $payload, array $headers, string $fromChannel)
     {
         $this->id          = uuid();
-        $this->time        = (float) \microtime(true);
         $this->payload     = $payload;
         $this->headers     = $headers;
         $this->fromChannel = $fromChannel;
@@ -63,14 +57,6 @@ final class RedisIncomingPackage implements IncomingPackage
     public function id(): string
     {
         return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function time(): float
-    {
-        return $this->time;
     }
 
     /**
