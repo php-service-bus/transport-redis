@@ -36,9 +36,7 @@ final class RedisIncomingPackage implements IncomingPackage
     /**
      * @psalm-var array<string, string|int|float>
      */
-    private array
-
- $headers;
+    private array $headers;
 
     /**
      * @psalm-param array<string, string|int|float> $headers

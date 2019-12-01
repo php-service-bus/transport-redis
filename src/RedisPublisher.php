@@ -56,7 +56,7 @@ final class RedisPublisher
     public function publish(OutboundPackage $outboundPackage): Promise
     {
         return call(
-            function(OutboundPackage $outboundPackage): \Generator
+            function (OutboundPackage $outboundPackage): \Generator
             {
                 if (false === isset($this->publishClient))
                 {

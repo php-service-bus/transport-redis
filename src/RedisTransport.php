@@ -37,9 +37,7 @@ final class RedisTransport implements Transport
      *
      * @var RedisConsumer[]
      */
-    private array
-
-        $consumers = [];
+    private array $consumers = [];
 
     private ?RedisPublisher $publisher;
 
@@ -79,7 +77,7 @@ final class RedisTransport implements Transport
     public function consume(callable $onMessage, Queue ...$queues): Promise
     {
         return call(
-            function(array $channels) use ($onMessage): \Generator
+            function (array $channels) use ($onMessage): \Generator
             {
                 yield $this->connect();
 
@@ -99,7 +97,7 @@ final class RedisTransport implements Transport
                     $promise = $consumer->listen($onMessage);
 
                     $promise->onResolve(
-                        function(?\Throwable $throwable) use ($channel, $consumer): void
+                        function (?\Throwable $throwable) use ($channel, $consumer): void
                         {
                             if (null !== $throwable)
                             {
@@ -135,7 +133,7 @@ final class RedisTransport implements Transport
          * @psalm-suppress InvalidArgument
          */
         return call(
-            function(OutboundPackage $outboundPackage): \Generator
+            function (OutboundPackage $outboundPackage): \Generator
             {
                 if (false === isset($this->publisher))
                 {
@@ -162,7 +160,7 @@ final class RedisTransport implements Transport
     public function disconnect(): Promise
     {
         return call(
-            function(): \Generator
+            function (): \Generator
             {
                 if (true === isset($this->publisher))
                 {

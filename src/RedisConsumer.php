@@ -74,7 +74,7 @@ final class RedisConsumer
     {
         /** @psalm-suppress MixedTypeCoercion */
         return call(
-            function() use ($onMessage): \Generator
+            function () use ($onMessage): \Generator
             {
                 if (false === isset($this->subscribeClient))
                 {
@@ -167,7 +167,7 @@ final class RedisConsumer
     {
         /** @psalm-suppress MixedTypeCoercion */
         return call(
-            function(): void
+            function (): void
             {
                 if (false === isset($this->subscribeClient))
                 {

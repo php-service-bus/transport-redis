@@ -67,12 +67,12 @@ final class RedisTransportTest extends TestCase
         $transport = new RedisTransport($this->config, null);
 
         Loop::run(
-            static function() use ($transport): \Generator
+            static function () use ($transport): \Generator
             {
                 $messages = [];
 
                 yield $transport->consume(
-                    static function(RedisIncomingPackage $message) use (&$messages, $transport): \Generator
+                    static function (RedisIncomingPackage $message) use (&$messages, $transport): \Generator
                     {
                         static::assertInstanceOf(RedisIncomingPackage::class, $message);
                         static::assertTrue(Uuid::isValid($message->id()));
@@ -122,12 +122,12 @@ final class RedisTransportTest extends TestCase
         $config = new RedisTransportConnectionConfiguration('tcp://localhost:1000');
 
         Loop::run(
-            static function() use ($config)
+            static function () use ($config)
             {
                 $transport = new RedisTransport($config);
 
                 yield $transport->consume(
-                    static function(): void
+                    static function (): void
                     {
                     },
                     new  RedisChannel('root')
