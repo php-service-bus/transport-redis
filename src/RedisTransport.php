@@ -39,7 +39,7 @@ final class RedisTransport implements Transport
      */
     private array $consumers = [];
 
-    private ?RedisPublisher $publisher;
+    private ?RedisPublisher $publisher = null;
 
     private LoggerInterface $logger;
 
@@ -162,7 +162,7 @@ final class RedisTransport implements Transport
         return call(
             function (): \Generator
             {
-                if (true === isset($this->publisher))
+                if ($this->publisher !== null)
                 {
                     $this->publisher->disconnect();
                 }

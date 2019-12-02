@@ -21,6 +21,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Transport\Common\Package\OutboundPackage;
 use ServiceBus\Transport\Common\Transport;
+use function ServiceBus\Common\jsonEncode;
 
 /**
  *
@@ -72,11 +73,7 @@ final class RedisPublisher
                 $destinationChannel = $destination->channel;
                 $headers            = \array_filter(\array_merge($internalHeaders, $outboundPackage->headers));
 
-                /** @var string $package */
-                $package = \json_encode(
-                    [$outboundPackage->payload, $headers],
-                    \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_THROW_ON_ERROR
-                );
+                $package = jsonEncode([$outboundPackage->payload, $headers]);
 
                 $this->logger->debug('Publish message to "{channelName}"', [
                     'traceId'     => $outboundPackage->traceId,
@@ -85,7 +82,11 @@ final class RedisPublisher
                     'isMandatory' => $outboundPackage->mandatoryFlag,
                 ]);
 
-                /** @var int $result */
+                /**
+                 * @psalm-suppress TooManyTemplateParams
+                 *
+                 * @var int $result
+                 */
                 $result = yield $this->publishClient->publish($destinationChannel, $package);
 
                 if (0 === $result && true === $outboundPackage->mandatoryFlag)

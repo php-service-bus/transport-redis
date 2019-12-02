@@ -20,37 +20,21 @@ use Amp\Redis\Subscriber;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Transport\Common\Exceptions\ConnectionFail;
+use function ServiceBus\Common\jsonDecode;
 
 /**
  * @internal
  */
 final class RedisConsumer
 {
-    /**
-     * @var RedisChannel
-     */
     private RedisChannel $channel;
 
-    /**
-     * @var RedisTransportConnectionConfiguration
-     */
     private RedisTransportConnectionConfiguration $config;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var Subscriber|null
-     */
-    private ?Subscriber $subscribeClient;
+    private ?Subscriber $subscribeClient = null;
 
-    /**
-     * @param RedisChannel                          $channel
-     * @param RedisTransportConnectionConfiguration $config
-     * @param LoggerInterface|null                  $logger
-     */
     public function __construct(
         RedisChannel $channel,
         RedisTransportConnectionConfiguration $config,
@@ -64,19 +48,14 @@ final class RedisConsumer
     /**
      * Listen channel messages.
      *
-     * @param callable $onMessage
-     *
      * @throws \ServiceBus\Transport\Common\Exceptions\ConnectionFail Connection refused
-     *
-     * @return Promise
      */
     public function listen(callable $onMessage): Promise
     {
-        /** @psalm-suppress MixedTypeCoercion */
         return call(
             function () use ($onMessage): \Generator
             {
-                if (false === isset($this->subscribeClient))
+                if ($this->subscribeClient === null)
                 {
                     $this->subscribeClient = new Subscriber(Config::fromUri($this->config->toString()));
                 }
@@ -87,7 +66,11 @@ final class RedisConsumer
 
                 try
                 {
-                    /** @var \Amp\Redis\Subscription $subscription */
+                    /**
+                     * @psalm-suppress TooManyTemplateParams
+                     *
+                     * @var \Amp\Redis\Subscription $subscription
+                     */
                     $subscription = yield $this->subscribeClient->subscribe($this->channel->toString());
                 }
                 catch (\Throwable $throwable)
@@ -121,22 +104,13 @@ final class RedisConsumer
     /**
      * Call message handler.
      *
-     * @param string   $messagePayload
-     * @param string   $onChannel
-     * @param callable $onMessage
-     *
      * @throws \Throwable json decode failed
-     *
-     * @return void
-     *
      */
     private static function handleMessage(string $messagePayload, string $onChannel, callable $onMessage): void
     {
-        /** @var array|null $decoded */
-        $decoded = \json_decode($messagePayload, true, 512, \JSON_THROW_ON_ERROR);
+        $decoded = jsonDecode($messagePayload);
 
-        /** @psalm-suppress RedundantConditionGivenDocblockType */
-        if (true === \is_array($decoded) && 2 === \count($decoded))
+        if (\count($decoded) === 2)
         {
             /**
              * @psalm-var string $body
@@ -165,11 +139,10 @@ final class RedisConsumer
      */
     public function stop(): Promise
     {
-        /** @psalm-suppress MixedTypeCoercion */
         return call(
             function (): void
             {
-                if (false === isset($this->subscribeClient))
+                if ($this->subscribeClient === null)
                 {
                     return;
                 }
