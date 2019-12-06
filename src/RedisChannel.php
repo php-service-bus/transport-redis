@@ -22,7 +22,8 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName;
  */
 final class RedisChannel implements Queue
 {
-    public string $name;
+    /** @var string  */
+    public $name;
 
     /**
      * {@inheritdoc}

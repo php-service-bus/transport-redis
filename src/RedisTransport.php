@@ -30,18 +30,21 @@ use ServiceBus\Transport\Common\Transport;
  */
 final class RedisTransport implements Transport
 {
-    private RedisTransportConnectionConfiguration $config;
+    /** @var RedisTransportConnectionConfiguration  */
+    private $config;
 
     /**
      * @psalm-var array<string, \ServiceBus\Transport\Redis\RedisConsumer>
      *
      * @var RedisConsumer[]
      */
-    private array $consumers = [];
+    private $consumers = [];
 
-    private ?RedisPublisher $publisher = null;
+    /** @var RedisPublisher|null */
+    private $publisher = null;
 
-    private LoggerInterface $logger;
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(RedisTransportConnectionConfiguration $config, ?LoggerInterface $logger = null)
     {
@@ -99,7 +102,7 @@ final class RedisTransport implements Transport
                     $promise->onResolve(
                         function (?\Throwable $throwable) use ($channel, $consumer): void
                         {
-                            if (null !== $throwable)
+                            if ($throwable !== null)
                             {
                                 throw $throwable;
                             }
@@ -135,7 +138,7 @@ final class RedisTransport implements Transport
         return call(
             function (OutboundPackage $outboundPackage): \Generator
             {
-                if (false === isset($this->publisher))
+                if ($this->publisher === null)
                 {
                     $this->publisher = new RedisPublisher($this->config, $this->logger);
                 }

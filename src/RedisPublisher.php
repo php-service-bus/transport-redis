@@ -28,11 +28,14 @@ use function ServiceBus\Common\jsonEncode;
  */
 final class RedisPublisher
 {
-    private ?Redis $publishClient;
+    /** @var Redis|null */
+    private $publishClient = null;
 
-    private RedisTransportConnectionConfiguration $config;
+    /** @var RedisTransportConnectionConfiguration */
+    private $config;
 
-    private LoggerInterface $logger;
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(RedisTransportConnectionConfiguration $config, ?LoggerInterface $logger = null)
     {
@@ -45,7 +48,7 @@ final class RedisPublisher
      */
     public function disconnect(): void
     {
-        if (true === isset($this->publishClient))
+        if ($this->publishClient !== null)
         {
             $this->publishClient = null;
         }
@@ -59,7 +62,7 @@ final class RedisPublisher
         return call(
             function (OutboundPackage $outboundPackage): \Generator
             {
-                if (false === isset($this->publishClient))
+                if ($this->publishClient === null)
                 {
                     $this->publishClient = new Redis(
                         new RemoteExecutor(Config::fromUri($this->config->toString()))
@@ -89,7 +92,7 @@ final class RedisPublisher
                  */
                 $result = yield $this->publishClient->publish($destinationChannel, $package);
 
-                if (0 === $result && true === $outboundPackage->mandatoryFlag)
+                if ($result === 0 && $outboundPackage->mandatoryFlag === true)
                 {
                     $this->logger->critical('Publish message failed', [
                         'channelName' => $destinationChannel,

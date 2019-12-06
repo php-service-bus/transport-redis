@@ -29,7 +29,7 @@
     }
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=7.3",
     "ext-json": "*",
     "amphp/redis": "v1.0.*",
     "php-service-bus/transport-common": "v4.0.*",

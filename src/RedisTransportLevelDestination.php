@@ -22,7 +22,8 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName;
  */
 final class RedisTransportLevelDestination implements DeliveryDestination
 {
-    public string $channel;
+    /** @var string  */
+    public $channel;
 
     /**
      * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName

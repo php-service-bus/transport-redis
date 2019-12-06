@@ -12,7 +12,6 @@ declare(strict_types = 1);
 
 namespace ServiceBus\Transport\Redis\Tests;
 
-use function Amp\Promise\wait;
 use PHPUnit\Framework\TestCase;
 use ServiceBus\Transport\Redis\RedisChannel;
 use ServiceBus\Transport\Redis\RedisConsumer;
@@ -23,7 +22,8 @@ use ServiceBus\Transport\Redis\RedisTransportConnectionConfiguration;
  */
 final class RedisConsumerTest extends TestCase
 {
-    private RedisTransportConnectionConfiguration $config;
+    /** @var RedisTransportConnectionConfiguration */
+    private $config;
 
     /**
      * {@inheritdoc}
@@ -54,9 +54,10 @@ final class RedisConsumerTest extends TestCase
      *
      * @throws \Throwable
      */
-    public function disconnectWithoutConsuming(): void
+    public function disconnectWithoutConsuming(): \Generator
     {
         $consumer = new RedisConsumer(new RedisChannel('qwerty'), $this->config);
-        wait($consumer->stop());
+
+        yield $consumer->stop();
     }
 }

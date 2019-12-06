@@ -27,13 +27,17 @@ use function ServiceBus\Common\jsonDecode;
  */
 final class RedisConsumer
 {
-    private RedisChannel $channel;
+    /** @var RedisChannel */
+    private $channel;
 
-    private RedisTransportConnectionConfiguration $config;
+    /** @var RedisTransportConnectionConfiguration */
+    private $config;
 
-    private LoggerInterface $logger;
+    /** @var LoggerInterface */
+    private $logger;
 
-    private ?Subscriber $subscribeClient = null;
+    /** @var Subscriber|null */
+    private $subscribeClient = null;
 
     public function __construct(
         RedisChannel $channel,

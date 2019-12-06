@@ -21,21 +21,26 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectConnectionParameters;
  */
 final class RedisTransportConnectionConfiguration
 {
-    private const DEFAULT_HOST    = 'localhost';
+    private const DEFAULT_HOST = 'localhost';
 
-    private const DEFAULT_PORT    = 6379;
+    private const DEFAULT_PORT = 6379;
 
     private const DEFAULT_TIMEOUT = 5;
 
-    public string $scheme;
+    /** @var string */
+    public $scheme;
 
-    public string $host;
+    /** @var string */
+    public $host;
 
-    public int $port;
+    /** @var int */
+    public $port;
 
-    public int $timeout;
+    /** @var int */
+    public $timeout;
 
-    public ?string $password;
+    /** @var string|null */
+    public $password;
 
     /**
      * @throws \ServiceBus\Transport\Redis\Exceptions\IncorrectConnectionParameters

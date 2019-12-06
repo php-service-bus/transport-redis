@@ -26,17 +26,23 @@ final class RedisIncomingPackage implements IncomingPackage
 {
     /**
      * Received package id.
+     *
+     * @var string
      */
-    private string $id;
+    private $id;
 
-    private string $fromChannel;
+    /** @var string */
+    private $fromChannel;
 
-    private string $payload;
+    /** @var string */
+    private $payload;
 
     /**
      * @psalm-var array<string, string|int|float>
+     *
+     * @var array
      */
-    private array $headers;
+    private $headers;
 
     /**
      * @psalm-param array<string, string|int|float> $headers
