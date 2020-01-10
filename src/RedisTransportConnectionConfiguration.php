@@ -59,7 +59,7 @@ final class RedisTransportConnectionConfiguration
         $this->password = isset($query['password']) ? (string) $query['password'] : null;
         $this->timeout  = isset($query['timeout']) ? (int) $query['timeout'] : self::DEFAULT_TIMEOUT;
 
-        if (0 > $this->timeout)
+        if ($this->timeout < 0)
         {
             $this->timeout = self::DEFAULT_TIMEOUT;
         }
@@ -81,19 +81,19 @@ final class RedisTransportConnectionConfiguration
      */
     private static function parseUrl(string $connectionDSN): array
     {
-        if ('' === $connectionDSN)
+        if ($connectionDSN === '')
         {
             throw IncorrectConnectionParameters::connectionDsnCantBeEmpty();
         }
 
-        if (0 !== \strpos($connectionDSN, 'tcp://') && 0 !== \strpos($connectionDSN, 'unix://'))
+        if (\strpos($connectionDSN, 'tcp://') !== 0 && \strpos($connectionDSN, 'unix://') !== 0)
         {
             throw IncorrectConnectionParameters::incorrectScheme();
         }
 
         $parsedParts = \parse_url($connectionDSN);
 
-        if (false !== $parsedParts)
+        if ($parsedParts !== false)
         {
             return $parsedParts;
         }

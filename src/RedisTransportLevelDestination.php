@@ -22,7 +22,7 @@ use ServiceBus\Transport\Redis\Exceptions\IncorrectChannelName;
  */
 final class RedisTransportLevelDestination implements DeliveryDestination
 {
-    /** @var string  */
+    /** @var string */
     public $channel;
 
     /**
@@ -30,7 +30,7 @@ final class RedisTransportLevelDestination implements DeliveryDestination
      */
     public function __construct(string $channel)
     {
-        if ('' === $channel)
+        if ($channel === '')
         {
             throw IncorrectChannelName::emptyChannelName();
         }

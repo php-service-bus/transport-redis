@@ -124,7 +124,7 @@ final class RedisIncomingPackage implements IncomingPackage
     {
         $traceId = (string) ($this->headers[Transport::SERVICE_BUS_TRACE_HEADER] ?? '');
 
-        if ('' === $traceId)
+        if ($traceId === '')
         {
             $traceId = uuid();
         }

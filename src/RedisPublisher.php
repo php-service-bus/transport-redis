@@ -60,7 +60,7 @@ final class RedisPublisher
     public function publish(OutboundPackage $outboundPackage): Promise
     {
         return call(
-            function (OutboundPackage $outboundPackage): \Generator
+            function () use ($outboundPackage): \Generator
             {
                 if ($this->publishClient === null)
                 {
@@ -99,8 +99,7 @@ final class RedisPublisher
                         'content'     => $package,
                     ]);
                 }
-            },
-            $outboundPackage
+            }
         );
     }
 }

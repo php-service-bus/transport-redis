@@ -80,14 +80,14 @@ final class RedisTransport implements Transport
     public function consume(callable $onMessage, Queue ...$queues): Promise
     {
         return call(
-            function (array $channels) use ($onMessage): \Generator
+            function () use ($queues, $onMessage): \Generator
             {
                 yield $this->connect();
 
                 $emitter = new Emitter();
 
                 /** @var \ServiceBus\Transport\Redis\RedisChannel $channel */
-                foreach ($channels as $channel)
+                foreach ($queues as $channel)
                 {
                     $this->logger->info('Starting a subscription to the "{channelName}" channel', [
                         'host'        => $this->config->host,
@@ -113,8 +113,7 @@ final class RedisTransport implements Transport
                 }
 
                 return $emitter->iterate();
-            },
-            $queues
+            }
         );
     }
 
@@ -136,7 +135,7 @@ final class RedisTransport implements Transport
          * @psalm-suppress InvalidArgument
          */
         return call(
-            function (OutboundPackage $outboundPackage): \Generator
+            function () use ($outboundPackage): \Generator
             {
                 if ($this->publisher === null)
                 {
@@ -144,8 +143,7 @@ final class RedisTransport implements Transport
                 }
 
                 yield $this->publisher->publish($outboundPackage);
-            },
-            $outboundPackage
+            }
         );
     }
 
